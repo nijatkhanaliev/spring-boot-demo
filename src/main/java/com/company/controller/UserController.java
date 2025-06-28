@@ -3,8 +3,11 @@ package com.company.controller;
 import com.company.models.dto.request.UserRequest;
 import com.company.models.dto.response.UserResponse;
 import com.company.service.UserService;
+import com.company.service.impl.UserServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,36 +19,55 @@ import java.util.Map;
 @RequestMapping("v1/users")
 @RequiredArgsConstructor
 public class UserController {
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     private final UserService userService;
 
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers(){
-       return ResponseEntity.ok(userService.getAllUsers());
+        logger.info("GET /users called");
+        List<UserResponse> users = userService.getAllUsers();
+        logger.info("GET /users returned {} users",users.size());
+
+        return ResponseEntity.ok(users);
     }
 
-    @GetMapping("/{id}/details")
+    @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id){
-        return ResponseEntity.ok(userService.getUserById(id));
+        logger.info("GET /users/{} called",id);
+        UserResponse user = userService.getUserById(id);
+        logger.info("User found with ID {}: {}",id,user);
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping
     public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest request){
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(request));
+        logger.info("POST /users called with request {}",request);
+        UserResponse user = userService.createUser(request);
+        logger.info("User created with ID {}: {}",user.getId(),user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<UserResponse> updateUser(@PathVariable Long id,@Valid @RequestBody UserRequest request){
-        return ResponseEntity.ok(userService.updateUser(id,request));
+        logger.info("PUT users/{} called with request {}",id,request);
+        UserResponse user = userService.updateUser(id, request);
+        logger.info("User updated with ID {}: {}",id,user);
+        return ResponseEntity.ok(user);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<UserResponse> patchUser(@PathVariable Long id, @RequestBody Map<String,Object> patchRequest){
-       return ResponseEntity.ok(userService.patchUser(id,patchRequest));
+        logger.info("PATCH /users/{} called with fields: {}",id,patchRequest.keySet());
+        UserResponse user = userService.patchUser(id, patchRequest);
+        logger.info("User patched with ID {}: {}",id,user);
+        return ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id){
+        logger.info("DELETE /users/{} called",id);
         userService.deleteUser(id);
+        logger.info("User deleted with ID {}",id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

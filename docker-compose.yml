@@ -1,0 +1,15 @@
+services:
+  spring_boot_demo_postgresql:
+    container_name: spring_boot_demo_postgresql
+    image: postgres:17.4
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: demoproject
+    volumes:
+      - data:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
+
+volumes:
+  data:

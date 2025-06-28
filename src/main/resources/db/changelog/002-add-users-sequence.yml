@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-users-sequence
+      author: nicat
+      changes:
+        - createSequence:
+            sequenceName: users_seq
+            startValue: 1
+            incrementBy: 1

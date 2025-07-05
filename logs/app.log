@@ -1,8 +1,5 @@
-2025-06-28 17:50:00 INFO  c.c.service.impl.UserServiceImpl - DELETE /users/10 called
-2025-06-28 17:50:00 INFO  c.c.service.impl.UserServiceImpl - User deleted  successfully with ID '10'
-2025-06-28 17:50:00 INFO  c.c.service.impl.UserServiceImpl - User deleted with ID 10
-2025-06-28 17:50:06 INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
-2025-06-28 17:50:06 INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
-2025-06-28 17:50:06 INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
-2025-06-28 17:50:06 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
-2025-06-28 17:50:06 INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-07-05 17:20:14 INFO  o.a.c.c.C.[.[localhost].[/api] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-07-05 17:20:14 INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-07-05 17:20:14 INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+2025-07-05 17:21:03 INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-07-05 17:21:03 INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete

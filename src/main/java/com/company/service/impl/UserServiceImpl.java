@@ -20,6 +20,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
+import static com.company.exceptions.constant.ErrorCode.USER_NOT_FOUND;
+import static com.company.exceptions.constant.ErrorMessage.USER_NOT_FOUND_MESSAGE;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -45,7 +48,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).orElseThrow(
                 () -> {
                     logger.error("User not found with ID {}", id);
-                    return new UserNotFound("user not exists with id: " + id);
+                    return new UserNotFound(String.format(USER_NOT_FOUND_MESSAGE,id),USER_NOT_FOUND);
                 }
 
         );
@@ -70,7 +73,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> {
                             logger.error("User not found with ID {}", id);
-                            return new UserNotFound("User not exists with id: " + id);
+                            return new UserNotFound(String.format(USER_NOT_FOUND_MESSAGE,id),USER_NOT_FOUND);
                         }
                 );
         userMapper.updateUserFromRequest(request, user);
@@ -87,7 +90,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> {
                             logger.error("User not found with ID {}", id);
-                            return new UserNotFound("User not exists with id: " + id);
+                            return new UserNotFound(String.format(USER_NOT_FOUND_MESSAGE,id),USER_NOT_FOUND);
                         }
                 );
         Class<?> clazz = user.getClass();
@@ -156,7 +159,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> {
                             logger.error("User not found with ID '{}'", id);
-                            return new UserNotFound("User not exists with id: " + id);
+                            return new UserNotFound(String.format(USER_NOT_FOUND_MESSAGE,id),USER_NOT_FOUND);
                         }
 
                 );

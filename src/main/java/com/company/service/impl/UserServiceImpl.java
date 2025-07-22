@@ -34,24 +34,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserResponse> getAllUsers() {
         logger.debug("Fetching all users");
-        List<User> userList = userRepository.findAll();
+        final List<User> userList = userRepository.findAll();
         logger.info("Fetched {} users", userList.size());
 
-        return userList.stream()
-                .map(userMapper::toUserResponse)
-                .toList();
+        return userList.stream().
+                map(userMapper::toUserResponse).
+                toList();
     }
 
     @Override
     public UserResponse getUserById(long id) {
         logger.debug("Fetching user by ID {}", id);
-        User user = userRepository.findById(id).orElseThrow(
-                () -> {
-                    logger.error("User not found with ID {}", id);
-                    return new UserNotFound(String.format(USER_NOT_FOUND_MESSAGE,id),USER_NOT_FOUND);
-                }
-
-        );
+        final User user = userRepository.findById(id).orElseThrow(() ->
+                new UserNotFound(String.format(USER_NOT_FOUND_MESSAGE, id),
+                            USER_NOT_FOUND));
         logger.info("User found with ID {}", id);
 
         return userMapper.toUserResponse(user);
@@ -60,7 +56,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse createUser(UserRequest request) {
         logger.debug("Creating user with request: {}", request);
-        User user = userMapper.toUser(request);
+        final User user = userMapper.toUser(request);
         userRepository.save(user);
         logger.info("User created successfully: {}", user.getId());
 
@@ -70,10 +66,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse updateUser(Long id, UserRequest request) {
         logger.debug("Updating user with ID {} using request: {}", id, request);
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> {
+        final User user = userRepository.findById(id).
+                orElseThrow(() -> {
                             logger.error("User not found with ID {}", id);
-                            return new UserNotFound(String.format(USER_NOT_FOUND_MESSAGE,id),USER_NOT_FOUND);
+                            return new UserNotFound(String.format(USER_NOT_FOUND_MESSAGE, id),
+                                    USER_NOT_FOUND);
                         }
                 );
         userMapper.updateUserFromRequest(request, user);
@@ -87,16 +84,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse patchUser(Long id, Map<String, Object> updates) {
         logger.debug("Patching user called with ID {} using updates: {}", id, updates);
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> {
+        final User user = userRepository.findById(id).
+                orElseThrow(() -> {
                             logger.error("User not found with ID {}", id);
-                            return new UserNotFound(String.format(USER_NOT_FOUND_MESSAGE,id),USER_NOT_FOUND);
+                            return new UserNotFound(String.format(USER_NOT_FOUND_MESSAGE, id),
+                                    USER_NOT_FOUND);
                         }
                 );
-        Class<?> clazz = user.getClass();
+        final Class<?> clazz = user.getClass();
 
         for (Map.Entry<String, Object> entry : updates.entrySet()) {
-            String fieldName = entry.getKey();
+            final String fieldName = entry.getKey();
             Object value = entry.getValue();
 
             if (value == null) {
@@ -105,10 +103,10 @@ public class UserServiceImpl implements UserService {
             }
 
             try {
-                Field field = clazz.getDeclaredField(fieldName);
+                final Field field = clazz.getDeclaredField(fieldName);
                 field.setAccessible(true);
 
-                Class<?> type = field.getType();
+                final Class<?> type = field.getType();
 
                 if (field.isAnnotationPresent(NotBlank.class) && value instanceof String strVal) {
                     if (strVal.isBlank()) {
@@ -118,16 +116,17 @@ public class UserServiceImpl implements UserService {
                 }
 
                 if (field.isAnnotationPresent(Size.class) && value instanceof String strVal) {
-                    Size size = field.getAnnotation(Size.class);
+                    final Size size = field.getAnnotation(Size.class);
                     if (strVal.length() > size.max()) {
                         logger.error("Patching field '{}' must be less than {}", fieldName, size.max() + 1);
-                        throw new IllegalArgumentException(fieldName + " must be less than " + (size.max() + 1));
+                        throw new IllegalArgumentException(fieldName + " must be less than " +
+                                (size.max() + 1));
                     }
                 }
 
                 if (type.equals(LocalDate.class) && value instanceof String strVal) {
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                    LocalDate date = LocalDate.parse(strVal, formatter);
+                    final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    final LocalDate date = LocalDate.parse(strVal, formatter);
 
                     if (date.isAfter(LocalDate.now())) {
                         logger.error("Patching field '{}' must be before now", fieldName);
@@ -156,10 +155,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long id) {
         logger.debug("Delete user with ID '{}'", id);
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> {
+        final User user = userRepository.findById(id).
+                orElseThrow(() -> {
                             logger.error("User not found with ID '{}'", id);
-                            return new UserNotFound(String.format(USER_NOT_FOUND_MESSAGE,id),USER_NOT_FOUND);
+                            return new UserNotFound(String.format(USER_NOT_FOUND_MESSAGE, id),
+                                    USER_NOT_FOUND);
                         }
 
                 );

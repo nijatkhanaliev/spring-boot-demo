@@ -12,8 +12,8 @@ public class UserResponse {
     private long id;
     private String firstName;
     private String lastName;
+    private String fullName;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING,pattern = "dd/MM/yyyy")
-    private LocalDate birthDate;;
-
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    private LocalDate birthDate;
 }

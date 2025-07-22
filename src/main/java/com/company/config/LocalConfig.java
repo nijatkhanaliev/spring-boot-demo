@@ -1,5 +1,7 @@
 package com.company.config;
 
+import java.util.Locale;
+
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,26 +9,23 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
-
-import java.util.Locale;
 
 @Configuration
 public class LocalConfig implements WebMvcConfigurer {
 
     @Bean
-    public LocaleChangeInterceptor localChangeInterceptor(){
-        LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
+    public LocaleChangeInterceptor localChangeInterceptor() {
+        final LocaleChangeInterceptor localeChangeInterceptor = new LocaleChangeInterceptor();
         localeChangeInterceptor.setParamName("lang");
 
-        return  localeChangeInterceptor;
+        return localeChangeInterceptor;
     }
 
     @Bean
-    public MessageSource messageSource(){
-        ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+    public MessageSource messageSource() {
+        final ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
         messageSource.setBasename("messages");
         messageSource.setDefaultEncoding("UTF-8");
 
@@ -34,8 +33,8 @@ public class LocalConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public LocaleResolver localResolver(){
-        AcceptHeaderLocaleResolver localeResolver = new AcceptHeaderLocaleResolver();
+    public LocaleResolver localeResolver() {
+        final SessionLocaleResolver localeResolver = new SessionLocaleResolver();
         localeResolver.setDefaultLocale(Locale.ENGLISH);
 
         return localeResolver;
@@ -45,5 +44,4 @@ public class LocalConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localChangeInterceptor());
     }
-
 }

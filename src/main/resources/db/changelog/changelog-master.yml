@@ -3,3 +3,7 @@ databaseChangeLog:
       file: classpath:/db/changelog/001-create-user-table.yml
   - include:
       file: classpath:/db/changelog/002-add-users-sequence.yml
+  - include:
+      file: /db/changelog/003-create-shed_lock-table.yml
+  - include:
+      file: /db/changelog/004-update-shed_lock-table-name-to-shedlock.yml

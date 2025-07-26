@@ -12,6 +12,9 @@ import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
@@ -33,7 +36,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserResponse> getAllUsers() {
-        logger.debug("Fetching all users");
         final List<User> userList = userRepository.findAll();
         logger.info("Fetched {} users", userList.size());
 
@@ -43,53 +45,47 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "USER_CACHE", key = "#id")
     public UserResponse getUserById(long id) {
-        logger.debug("Fetching user by ID {}", id);
         final User user = userRepository.findById(id).orElseThrow(() ->
                 new UserNotFound(String.format(USER_NOT_FOUND_MESSAGE, id),
-                            USER_NOT_FOUND));
+                        USER_NOT_FOUND));
         logger.info("User found with ID {}", id);
 
         return userMapper.toUserResponse(user);
     }
 
     @Override
+    @CachePut(value = "USER_CACHE", key = "#result.id()")
     public UserResponse createUser(UserRequest request) {
-        logger.debug("Creating user with request: {}", request);
+        logger.info("creating user");
         final User user = userMapper.toUser(request);
         userRepository.save(user);
-        logger.info("User created successfully: {}", user.getId());
 
         return userMapper.toUserResponse(user);
     }
 
     @Override
+    @CachePut(value = "USER_CACHE", key = "#id")
     public UserResponse updateUser(Long id, UserRequest request) {
-        logger.debug("Updating user with ID {} using request: {}", id, request);
+        logger.info("Updating user with ID {}", id);
         final User user = userRepository.findById(id).
-                orElseThrow(() -> {
-                            logger.error("User not found with ID {}", id);
-                            return new UserNotFound(String.format(USER_NOT_FOUND_MESSAGE, id),
-                                    USER_NOT_FOUND);
-                        }
+                orElseThrow(() -> new UserNotFound(String.format(USER_NOT_FOUND_MESSAGE, id),
+                        USER_NOT_FOUND)
                 );
         userMapper.updateUserFromRequest(request, user);
-
         userRepository.save(user);
-        logger.info("User updated with ID {}", id);
 
         return userMapper.toUserResponse(user);
     }
 
     @Override
+    @CachePut(value = "USER_CACHE", key = "#id")
     public UserResponse patchUser(Long id, Map<String, Object> updates) {
-        logger.debug("Patching user called with ID {} using updates: {}", id, updates);
+        logger.info("Patching user called with ID {} using updates: {}", id, updates);
         final User user = userRepository.findById(id).
-                orElseThrow(() -> {
-                            logger.error("User not found with ID {}", id);
-                            return new UserNotFound(String.format(USER_NOT_FOUND_MESSAGE, id),
-                                    USER_NOT_FOUND);
-                        }
+                orElseThrow(() -> new UserNotFound(String.format(USER_NOT_FOUND_MESSAGE, id),
+                        USER_NOT_FOUND)
                 );
         final Class<?> clazz = user.getClass();
 
@@ -110,7 +106,7 @@ public class UserServiceImpl implements UserService {
 
                 if (field.isAnnotationPresent(NotBlank.class) && value instanceof String strVal) {
                     if (strVal.isBlank()) {
-                        logger.error("Patching field '{}' is blank  ", fieldName);
+                        logger.warn("Patching field '{}' is blank  ", fieldName);
                         throw new IllegalArgumentException(fieldName + " must be not blank");
                     }
                 }
@@ -118,7 +114,7 @@ public class UserServiceImpl implements UserService {
                 if (field.isAnnotationPresent(Size.class) && value instanceof String strVal) {
                     final Size size = field.getAnnotation(Size.class);
                     if (strVal.length() > size.max()) {
-                        logger.error("Patching field '{}' must be less than {}", fieldName, size.max() + 1);
+                        logger.warn("Patching field '{}' must be less than {}", fieldName, size.max() + 1);
                         throw new IllegalArgumentException(fieldName + " must be less than " +
                                 (size.max() + 1));
                     }
@@ -153,17 +149,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "USER_CACHE", key = "#id")
     public void deleteUser(Long id) {
-        logger.debug("Delete user with ID '{}'", id);
+        logger.warn("Delete user with ID '{}'", id);
         final User user = userRepository.findById(id).
-                orElseThrow(() -> {
-                            logger.error("User not found with ID '{}'", id);
-                            return new UserNotFound(String.format(USER_NOT_FOUND_MESSAGE, id),
-                                    USER_NOT_FOUND);
-                        }
-
+                orElseThrow(() -> new UserNotFound(String.format(USER_NOT_FOUND_MESSAGE, id),
+                        USER_NOT_FOUND)
                 );
-        logger.info("User deleted  successfully with ID '{}'", id);
+
         userRepository.delete(user);
     }
 

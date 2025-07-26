@@ -22,6 +22,12 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:/db/changelog/changelog-master.yml
+  cache:
+    type: redis
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
 server:
   port: 8585

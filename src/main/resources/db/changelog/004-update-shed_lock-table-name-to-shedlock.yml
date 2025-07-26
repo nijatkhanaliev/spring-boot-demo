@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-update-shed_lock-table-name-to-shedlock
+      author: nicat
+      changes:
+        - renameTable:
+            oldTableName: shed_lock
+            newTableName: shedlock
+
